@@ -1,6 +1,6 @@
 # Data-Science-AI-24.25
 ![Cover](https://github.com/GDG-on-Campus-Benha/Flutter-24.25/blob/main/showcase/BootCamp.jpg)
-# `GDG on Campus Banha BootCamp` - `Flutter Track` 🚀
+# `GDG on Campus Banha BootCamp` - `Data Science & AI Track` 🚀
 Welcome to the official repository for the GDG on Campus Banha BootCamp 🎉
 
 This repo contains all the materials, resources, and code samples used during the bootcamp. Whether you're a participant, mentor, or just curious, feel free to explore, learn, and contribute!
