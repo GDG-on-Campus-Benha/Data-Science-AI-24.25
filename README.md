@@ -36,7 +36,7 @@ Ways to Connect:
 - Resume: [Saher Muhamed's Resume](https://drive.google.com/file/d/1CId-pc_3G3j_UIgxBnCE03zQp-DtEz5f/view)
 
 - Email: sahermuhamed176@gmail.com
-- 
+  
 - LinkedIn: [Saher Muhamed's Linkedin](https://www.linkedin.com/in/sahermuhamed/)
 
 - GitHub: [Saher Muhamed's GitHub](https://github.com/sahermuhamed1)
@@ -54,7 +54,7 @@ Ways to Connect:
 Ways to Connect:
 
 - Resume: [Ziad Mostafa's Resume](https://ziadai.me/files/cv.pdf)
-- 
+
 - Email: ziad.zero1245@gmail.com
 
 - LinkedIn: [Ziad Mostafa](https://www.linkedin.com/in/ziadmostafa/)
