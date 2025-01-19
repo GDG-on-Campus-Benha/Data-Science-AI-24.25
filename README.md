@@ -1,5 +1,5 @@
 # Data-Science-AI-24.25
-![Cover](./showcase/GDGonCampusBenhaCover.jpg)
+![Cover]([showcase/BootCamp.jpg](https://github.com/GDG-on-Campus-Benha/Flutter-24.25/blob/main/showcase/BootCamp.jpg))
 # `GDG on Campus Banha BootCamp` - `Flutter Track` 🚀
 Welcome to the official repository for the GDG on Campus Banha BootCamp 🎉
 
