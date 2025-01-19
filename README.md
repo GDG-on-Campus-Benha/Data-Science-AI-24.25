@@ -21,7 +21,7 @@ This repo contains all the materials, resources, and code samples used during th
 
 ## Data Science & AI Instructors
 
-## `Mohamed Elbaiomy`
+## `Saher Muhamed`
 
 - Head of Data Science & AI @GDG on Campus Benha
 - AI Software Engineer @Shipd
