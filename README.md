@@ -11,6 +11,13 @@ This repo contains all the materials, resources, and code samples used during th
 - Projects: The workshop project which will be implemented during the bootcamp duration
 - Resources: Links to useful articles, tools, and documentation.
 - Tasks: Practice problems and challenges to reinforce your learning.
+  
+## Repo Branches
+1) **Main**: contains a summaruy description about our track
+
+2) **Master**: contains the full workshop project 
+
+3) **Sessions**: contains the sessions presentation
 
 ## How to Use
 1) Clone the repo to your local machine.
