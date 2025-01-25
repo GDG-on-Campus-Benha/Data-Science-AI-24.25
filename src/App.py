@@ -33,7 +33,6 @@ def main():
     selected_title = st.selectbox(
         'Select Course Title',
         filtered_titles if search_query else available_titles,
-        placeholder='Course Title'
     )
     
     if selected_title in available_titles:
