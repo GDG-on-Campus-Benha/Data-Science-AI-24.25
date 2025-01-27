@@ -1,0 +1,17 @@
+area
+bedrooms
+bathrooms
+stories
+parking
+mainroad_no
+mainroad_yes
+guestroom_no
+guestroom_yes
+basement_no
+basement_yes
+hotwaterheating_no
+hotwaterheating_yes
+airconditioning_no
+airconditioning_yes
+prefarea_no
+prefarea_yes
