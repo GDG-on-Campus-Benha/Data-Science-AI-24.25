@@ -1,0 +1,308 @@
+E-Commerce Database
+
+CREATE DATABASE ECommerceDB;
+GO
+
+-- Use the database
+USE ECommerceDB;
+GO
+
+-- Step 2: Create tables
+
+-- Customers Table
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100) UNIQUE NOT NULL,
+    Phone NVARCHAR(15),
+    Address NVARCHAR(255)
+);
+GO
+
+-- Products Table
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    ProductName NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(255),
+    Price DECIMAL(10, 2) NOT NULL,
+    StockQuantity INT NOT NULL
+);
+GO
+
+-- Orders Table
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME NOT NULL DEFAULT GETDATE(),
+    TotalAmount DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) -- Foreign key to Customers
+);
+GO
+
+-- OrderDetails Table
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID), -- Foreign key to Orders
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID) -- Foreign key to Products
+);
+GO
+
+-- Step 3: Populate the database with a large dataset
+
+-- Fill the Customers table with 10,000 unique entries
+DECLARE @i INT = 1;
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO Customers (FirstName, LastName, Email, Phone, Address)
+    VALUES (
+        CONCAT('FirstName', @i),
+        CONCAT('LastName', @i),
+        CONCAT('user', @i, '@example.com'), -- Ensures unique email addresses
+        CONCAT('123-456-', RIGHT('0000' + CAST(@i AS VARCHAR), 4)),
+        CONCAT(@i, ' Sample St, City, Country')
+    );
+    SET @i = @i + 1;
+END;
+GO
+
+-- Fill the Products table with 1,000 unique entries
+DECLARE @j INT = 1;
+WHILE @j <= 1000
+BEGIN
+    INSERT INTO Products (ProductName, Description, Price, StockQuantity)
+    VALUES (
+        CONCAT('Product ', @j),
+        CONCAT('Description for Product ', @j),
+        CAST(RAND() * 1000 AS DECIMAL(10, 2)), -- Random price between 0 and 1000
+        CAST(RAND() * 100 AS INT) + 1 -- Random stock quantity between 1 and 100
+    );
+    SET @j = @j + 1;
+END;
+GO
+
+-- Fill the Orders table with 50,000 unique entries
+DECLARE @k INT = 1;
+WHILE @k <= 50000
+BEGIN
+    DECLARE @CustomerID INT = CAST(RAND() * 10000 AS INT) + 1; -- Random customer between 1 and 10000
+    DECLARE @TotalAmount DECIMAL(10, 2) = CAST(RAND() * 1000 AS DECIMAL(10, 2)); -- Random total amount between 0 and 1000
+
+    INSERT INTO Orders (CustomerID, OrderDate, TotalAmount)
+    VALUES (
+        @CustomerID,
+        DATEADD(DAY, -CAST(RAND() * 365 AS INT), GETDATE()), -- Random order date within the last year
+        @TotalAmount
+    );
+    SET @k = @k + 1;
+END;
+GO
+
+-- Fill the OrderDetails table with 100,000 unique entries
+DECLARE @l INT = 1;
+WHILE @l <= 100000
+BEGIN
+    DECLARE @OrderID INT = CAST(RAND() * 50000 AS INT) + 1; -- Random order between 1 and 50000
+    DECLARE @ProductID INT = CAST(RAND() * 1000 AS INT) + 1; -- Random product between 1 and 1000
+    DECLARE @Quantity INT = CAST(RAND() * 10 AS INT) + 1; -- Random quantity between 1 and 10
+    DECLARE @UnitPrice DECIMAL(10, 2);
+
+    -- Fetch the product price
+    SELECT @UnitPrice = Price FROM Products WHERE ProductID = @ProductID;
+
+    INSERT INTO OrderDetails (OrderID, ProductID, Quantity, UnitPrice)
+    VALUES (
+        @OrderID,
+        @ProductID,
+        @Quantity,
+        @UnitPrice
+    );
+    SET @l = @l + 1;
+END;
+GO
+
+-- Step 4: Sample Queries for Analysis
+
+-- Query 1: Get all customers
+SELECT * FROM Customers;
+GO
+
+-- Query 2: Get all products
+SELECT * FROM Products;
+GO
+
+-- Query 3: Get all orders with customer details
+SELECT 
+    O.OrderID,
+    O.OrderDate,
+    O.TotalAmount,
+    C.FirstName,
+    C.LastName,
+    C.Email
+FROM Orders O
+JOIN Customers C ON O.CustomerID = C.CustomerID;
+GO
+
+-- Query 4: Get order details with product information
+SELECT 
+    OD.OrderDetailID,
+    OD.OrderID,
+    P.ProductName,
+    OD.Quantity,
+    OD.UnitPrice,
+    (OD.Quantity * OD.UnitPrice) AS TotalPrice
+FROM OrderDetails OD
+JOIN Products P ON OD.ProductID = P.ProductID;
+GO
+
+-- Query 5: Get total revenue by product
+SELECT 
+    P.ProductName,
+    SUM(OD.Quantity * OD.UnitPrice) AS TotalRevenue
+FROM OrderDetails OD
+JOIN Products P ON OD.ProductID = P.ProductID
+GROUP BY P.ProductName
+ORDER BY TotalRevenue DESC;
+GO
+
+-- Query 6: Get the top-spending customers
+SELECT 
+    C.FirstName,
+    C.LastName,
+    SUM(O.TotalAmount) AS TotalSpent
+FROM Orders O
+JOIN Customers C ON O.CustomerID = C.CustomerID
+GROUP BY C.FirstName, C.LastName
+ORDER BY TotalSpent DESC;
+GO
+
+-- Query 7: Get the most popular products (by quantity sold)
+SELECT 
+    P.ProductName,
+    SUM(OD.Quantity) AS TotalQuantitySold
+FROM OrderDetails OD
+JOIN Products P ON OD.ProductID = P.ProductID
+GROUP BY P.ProductName
+ORDER BY TotalQuantitySold DESC;
+GO
+
+Select * from OrderDetails;
+
+Select * from Customers;
+
+Select * from Orders;
+
+CREATE VIEW CustomerOrderSummary AS
+SELECT 
+    C.CustomerID,
+    C.FirstName,
+    C.LastName,
+    C.Email,
+    COUNT(O.OrderID) AS TotalOrders,
+    SUM(O.TotalAmount) AS TotalSpent
+FROM Customers C
+LEFT JOIN Orders O ON C.CustomerID = O.CustomerID
+GROUP BY C.CustomerID, C.FirstName, C.LastName, C.Email;
+GO
+
+CREATE VIEW ProductSalesSummary AS
+SELECT 
+    P.ProductID,
+    P.ProductName,
+    P.Price,
+    SUM(OD.Quantity) AS TotalQuantitySold,
+    SUM(OD.Quantity * OD.UnitPrice) AS TotalRevenue
+FROM Products P
+JOIN OrderDetails OD ON P.ProductID = OD.ProductID
+GROUP BY P.ProductID, P.ProductName, P.Price;
+GO
+
+CREATE VIEW OrderDetailsWithProductInfo AS
+SELECT 
+    OD.OrderDetailID,
+    OD.OrderID,
+    P.ProductName,
+    OD.Quantity,
+    OD.UnitPrice,
+    (OD.Quantity * OD.UnitPrice) AS TotalPrice
+FROM OrderDetails OD
+JOIN Products P ON OD.ProductID = P.ProductID;
+GO
+
+CREATE VIEW MonthlyRevenue AS
+SELECT 
+    YEAR(O.OrderDate) AS OrderYear,
+    MONTH(O.OrderDate) AS OrderMonth,
+    SUM(O.TotalAmount) AS TotalRevenue
+FROM Orders O
+GROUP BY YEAR(O.OrderDate), MONTH(O.OrderDate);
+GO
+
+CREATE VIEW TopSpendingCustomers AS
+SELECT TOP 10
+    C.CustomerID,
+    C.FirstName,
+    C.LastName,
+    C.Email,
+    SUM(O.TotalAmount) AS TotalSpent
+FROM Customers C
+JOIN Orders O ON C.CustomerID = O.CustomerID
+GROUP BY C.CustomerID, C.FirstName, C.LastName, C.Email
+ORDER BY TotalSpent DESC;
+GO
+
+CREATE VIEW MostPopularProducts AS
+SELECT TOP 10
+    P.ProductID,
+    P.ProductName,
+    SUM(OD.Quantity) AS TotalQuantitySold
+FROM Products P
+JOIN OrderDetails OD ON P.ProductID = OD.ProductID
+GROUP BY P.ProductID, P.ProductName
+ORDER BY TotalQuantitySold DESC;
+GO
+
+-- Query the CustomerOrderSummary view
+SELECT * FROM CustomerOrderSummary;
+
+-- Query the ProductSalesSummary view
+SELECT * FROM ProductSalesSummary;
+
+-- Query the MonthlyRevenue view
+SELECT * FROM MonthlyRevenue;
+
+-- Query the TopSpendingCustomers view
+SELECT * FROM TopSpendingCustomers;
+
+-- Query the MostPopularProducts view
+SELECT * FROM MostPopularProducts;
+
+-- Step 1: Add Categories Table
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    CategoryName NVARCHAR(100) NOT NULL
+);
+GO
+
+-- Step 2: Add Subcategories Table
+CREATE TABLE Subcategories (
+    SubcategoryID INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    SubcategoryName NVARCHAR(100) NOT NULL,
+    CategoryID INT NOT NULL, -- Foreign key to Categories
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+GO
+
+-- Step 3: Modify Products Table to include SubcategoryID
+ALTER TABLE Products
+ADD SubcategoryID INT;
+
+-- Add foreign key constraint to link Products to Subcategories
+ALTER TABLE Products
+ADD CONSTRAINT FK_Products_Subcategories
+FOREIGN KEY (SubcategoryID) REFERENCES Subcategories(SubcategoryID);
+GO
